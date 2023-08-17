@@ -1,0 +1,72 @@
+{% extends 'home/base.html' %} 
+
+{% block title %} Search Your book Here {% endblock title %}
+
+{% block showactive %} active {% endblock showactive %}
+
+{% block body %}
+
+{% load extras %}
+
+
+
+    {% for title,authors,page_count,average_count,ins in book %}
+    <div class="container" id="fpr{{forloop.counter}}">
+        <h2> The Book title is: {{ title }}</h2>
+        <h2> The Book authors: {{ authors }}</h2>
+        <h3> The Page number is: {{ page_count }}</h3>
+        <h5> The rating of the book is: {{ average_count }}</h5>
+        <form class="dfpr" method="post" id="dfpr{{forloop.counter}}"> {% csrf_token %} 
+            <input id="IsbnDelete{{forloop.counter}}" type="hidden" name="IsbnDeletedfpr{{forloop.counter}}" value="{{ins}}">  
+            
+            <button type="submit" class="btn btn-primary" id="bd{{forloop.counter}}">Delete</button>
+            
+          </form>
+          <hr>
+    </div>
+    
+
+    {% endfor %}
+
+    
+{% endblock body %}
+
+{% block script %}
+
+<script>
+ $('.dfpr').on("submit",function (event) {
+    event.preventDefault();
+    console.log(`In the container before #${this.id}`);
+     var data={
+         "IsbnDelete": $(`input[name=IsbnDelete${this.id}]`).val(),
+         
+         "csrfmiddlewaretoken":$(`input[name=csrfmiddlewaretoken]`).val(),
+     };
+     var iid=this.id.slice(1,);
+     $.ajax(
+         {
+             type: "POST",
+             url: "/isbndelete",
+             data: data,
+             encode: true,
+
+             success: function (val) {
+                
+                 document.getElementById(`${iid}`).innerHTML="";
+
+                 if(val["msg"]=="True"){
+                 alert('Deleted');
+                 }
+                 else{
+                     alsert(" The Information has already been deleted")
+                 }
+                
+                 
+             },
+         });
+         
+ });
+
+</script>
+
+{% endblock script %}

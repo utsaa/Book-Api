@@ -1,0 +1,40 @@
+{% extends 'home/base.html' %}
+
+{% block title %} Search your books by ISBN number or Name {% endblock title %}
+
+{% block isbnactive %} active {% endblock isbnactive %}
+
+{% block body %}
+
+
+
+
+
+<div class="container">
+  <h2>Sign Up Here</h2>
+  <form action="/handleisbn" method="get">
+
+    <div class="form-group">
+      <label for="isbn">ISBN Number</label>
+      <input type="text" class="form-control" id="isbninp" name="isbninp" placeholder="Write your ISBN Number" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+  </form>
+
+
+  <form action="/isbnname" method="get">
+
+    <div class="form-group">
+      <label for="isbnname">Book Name</label>
+      <input type="text" class="form-control" id="isbninpname" name="isbninpname" placeholder="Write your Book Name"
+        required>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+  </form>
+</div>
+
+{% endblock body %}

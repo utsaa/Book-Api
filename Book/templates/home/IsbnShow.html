@@ -1,0 +1,83 @@
+{% extends 'home/base.html' %}
+
+{% block title %} Showing Your Results {% endblock title %}
+
+{% block isbnactive %} active {% endblock isbnactive %}
+
+{% block body %}
+
+{% load extras %}
+
+
+
+{% for vol in VolInfo %}
+<div class="container" id="spr{{forloop.counter}}">
+    <h2> The Book title is: {{ vol|get_title }}</h2>
+    <h2> The Book authors: {{ vol|get_auth }}</h2>
+    <h3> The Page number is: {{ vol|get_pg }}</h3>
+    <h5> The rating of the book is: {{ vol|get_rating }}</h5>
+    <form method="post" id="sfpr{{forloop.counter}}" class="sfpr"> {% csrf_token %}
+        <input id="IsbnTitle{{forloop.counter}}" type="hidden" name="IsbnTitlesfpr{{forloop.counter}}"
+            value="{{ vol|get_title}}">
+        <input id="IsbnAuthors{{forloop.counter}}" type="hidden" name="IsbnAuthorssfpr{{forloop.counter}}"
+            value="{{ vol|get_auth}}">
+        <input id="IsbnPage{{forloop.counter}}" type="hidden" name="IsbnPagesfpr{{forloop.counter}}"
+            value="{{vol|get_pg}}">
+        <input id="IsbnRating{{forloop.counter}}" type="hidden" name="IsbnRatingsfpr{{forloop.counter}}"
+            value="{{vol|get_rating}}">
+
+        <button type="submit" class="btn btn-primary" id="bs{{forloop.counter}}">save</button>
+
+
+    </form>
+    <hr>
+</div>
+
+
+{% endfor %}
+
+{% endblock body %}
+
+{% block script %}
+
+<script>
+    $('.sfpr').on("submit", function (event) {
+        event.preventDefault();
+        console.log(`In the container before #${this.id}`);
+        var iid = this.id.slice(2,);
+        console.log("The id in save is" + this.id);
+        console.log("The iid in save is" + iid);
+        var data = {
+            "IsbnTitle": $(`input[name=IsbnTitle${this.id}]`).val(),
+            "IsbnAuthors": $(`input[name=IsbnAuthors${this.id}]`).val(),
+            "IsbnPage": $(`input[name=IsbnPage${this.id}]`).val(),
+            "IsbnRating": $(`input[name=IsbnRating${this.id}]`).val(),
+            "csrfmiddlewaretoken": $(`input[name=csrfmiddlewaretoken]`).val(),
+        };
+
+        $.ajax(
+            {
+                type: "POST",
+                url: "/isbnsave",
+                data: data,
+                encode: true,
+
+                success: function (val) {
+
+                    document.getElementById('s' + iid).innerHTML = "";
+
+                    if (val["msg"] == "True") {
+                        alert('Saved');
+                    }
+                    else {
+                        alert("The book has already been saved")
+                    }
+
+                },
+            });
+
+    });
+
+</script>
+
+{% endblock script %}
